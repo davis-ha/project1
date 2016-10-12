@@ -1,3 +1,5 @@
+// Davis Ha
+// dha5536@csu.fullerton.edu
 
 // catalog.hpp
 // CSUF CPSC 131, Fall 2016, Project 1
@@ -8,6 +10,9 @@
 
 #include <stdexcept>
 #include <string>
+#include <vector>
+
+using namespace std;
 
 // A product represents one particular kind of product, such as apples
 // or cereal.
@@ -21,23 +26,30 @@ public:
   // name may be any string.
   //
   // price is in units of dollars. It must be positive, or else this
-  // function throws std::invalid_argument.
-  Product(const std::string& code,
-          const std::string& name,
-          double price) {
-    // TODO: implement this function properly
-    throw std::logic_error("not implemented yet");
+  // function throws invalid_argument.
+  Product(){
+    throw logic_error("no default constructor implemented");
   }
 
-  ~Product() { }
+  Product( string newCode, string newName, double newPrice ) {
+     if(newPrice > 0){
+      code = newCode;
+      name = newName;
+      price = newPrice;
+      } else {
+        throw invalid_argument("price is not positive");
+      }
+   }
+  
+  ~Product() {}
 
   // Accessors.
-  const std::string& getCode() const { return code; }
-  const std::string& getName() const { return name; }
+  const string& getCode() const { return code; }
+  const string& getName() const { return name; }
   double getPrice() const { return price; }
   
 private:
-  std::string code, name;
+  string code, name;
   double price;
 };
 
@@ -49,48 +61,69 @@ public:
   //
   // maxProducts is the maximum number of products that can be
   // stored. It must be positive, or else this function throws
-  // std::invalid_argument.
-  Catalog(int maxProducts) {
-    // TODO: implement this function properly
-    throw std::logic_error("not implemented yet");
+  // invalid_argument.
+  Catalog(int newMaxProducts) {
+    // TODO: implement this function properly(done)
+    if(newMaxProducts > 0){
+      maxProducts = newMaxProducts;
+      numProducts = 0;
+      vector<Product> catalogOfProducts;
+    } else {
+          throw invalid_argument("max products is not positive");
+    }
   }
   
   ~Catalog() {
     // TODO: implement this function properly
-    throw std::logic_error("not implemented yet");
   }
 
   // Accessors.
-  int getMaxProducts() const {
-    // TODO: implement this function properly
-    throw std::logic_error("not implemented yet");
-  }
+  int getMaxProducts() const { return maxProducts; }
   
-  int getNumProducts() const {
-    // TODO: implement this function properly
-    throw std::logic_error("not implemented yet");
-  }
+  int getNumProducts() const { return numProducts; }
 
   // Return true when the catalog cannot fit any more products.
-  bool isFull() const {
-    // TODO: implement this function properly
-    throw std::logic_error("not implemented yet");
-  }
+  bool isFull() const { 
+      if ( numProducts < maxProducts){
+        return false;
+      } else {
+        return true;
+      }
+   }
 
   // Add a new product to the catalog with a given code and name.
   //
   // code, name, and price have the same meaning as in a Product. If
-  // price is invalid, throw std::invalid_argument.
+  // price is invalid, throw invalid_argument.
   //
   // If this catalog is already full, throw overflow_error.
   //
   // Code must be different from all the product codes already in the
-  // database. If it's not, throw std::invalid_argument.
-  void addProduct(const std::string& code,
-                  const std::string& name,
+  // database. If it's not, throw invalid_argument.
+  void addProduct(const string& code,
+                  const string& name,
                   double price) {
-    // TODO: implement this function properly
-    throw std::logic_error("not implemented yet");
+    if ( price < 0 ){
+      throw invalid_argument("Price is not positive");
+    } else if ( numProducts >= maxProducts ){
+      throw overflow_error("The catalog is full");
+    } else {
+      bool duplicate = false;
+
+      for(int iter = 0; iter < catalogOfProducts.size(); iter++){
+        if(catalogOfProducts[iter].getCode() == code){
+         duplicate = true;
+        }
+      }
+
+      if (!duplicate){
+        Product newProduct(code, name, price);
+        catalogOfProducts.push_back(newProduct);
+        numProducts++;
+      } else {
+        throw invalid_argument("duplicate code found.");
+      }
+    }
   }
 
   // Find a product by its code.
@@ -99,13 +132,21 @@ public:
   //
   // Returns a const reference to the product with the matching code.
   //
-  // Throw std::invalid_argument if no product with that code exists
+  // Throw invalid_argument if no product with that code exists
   // in the catalog.
-  const Product& findCode(const std::string& code) const {
-    // TODO: implement this function properly
-    throw std::logic_error("not implemented yet");
+  const Product& findCode(const string& code) const {
+    // TODO: implement this function properly(done)
+    for(int iter = 0; iter < catalogOfProducts.size(); iter++){
+      if(catalogOfProducts[iter].getCode() == code){
+        return catalogOfProducts[iter];
+      }
+    }
+
+    throw invalid_argument("code does not exist in catalog");
   }
 
 private:
-  // TODO: add data members
+  // TODO: add data members(done)
+  int maxProducts, numProducts;
+  vector<Product> catalogOfProducts;
 };
